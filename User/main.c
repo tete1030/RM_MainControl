@@ -16,7 +16,7 @@ int main(void)
 	  //delay_ms(1000);
     //CAN1_Configuration();
     //CAN2_Configuration();	
-	  USART3_Configuration();//UART≈‰÷√
+	  USART3_Configuration();//≈‰÷√UART
     Receiver_Configuration();
 	  printf("Test Start;\r\n");
 		while(1)
