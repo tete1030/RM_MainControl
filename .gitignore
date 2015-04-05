@@ -35,7 +35,7 @@
 .DS_Store
 
 # Keil object files
-Project/Objects
+Project/Objects/
 
 # Keil project files
 Project/JLinkLog.txt
