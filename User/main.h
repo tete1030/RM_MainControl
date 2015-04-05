@@ -1,6 +1,11 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <stdarg.h>
+
 #include "stm32f4xx.h"
 
 #include "ad.h"
@@ -18,10 +23,7 @@
 #include "buzzer.h"
 #include "receiver.h"//added 7.27
 
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdarg.h>
+
 
 #define abs(x) ((x)>0? (x):(-(x)))
 

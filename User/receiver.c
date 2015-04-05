@@ -14,61 +14,61 @@ unsigned char sbus_rx_buffer[18];
 
 void Receiver_Configuration(void)
 {
-    USART_InitTypeDef usart2;
-	GPIO_InitTypeDef  gpio;
-    NVIC_InitTypeDef  nvic;
-    DMA_InitTypeDef   dma;
-	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_DMA1,ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
-	
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource3 ,GPIO_AF_USART2);
-	
-	gpio.GPIO_Pin = GPIO_Pin_3 ;
-	gpio.GPIO_Mode = GPIO_Mode_AF;
-    gpio.GPIO_OType = GPIO_OType_PP;
-    gpio.GPIO_Speed = GPIO_Speed_100MHz;
-    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOA,&gpio);
-    
-      USART_DeInit(USART2);
-	usart2.USART_BaudRate = 100000;   //SBUS 100K baudrate
-	usart2.USART_WordLength = USART_WordLength_8b;
-	usart2.USART_StopBits = USART_StopBits_1;
-	usart2.USART_Parity = USART_Parity_Even;
-	usart2.USART_Mode = USART_Mode_Rx;
-    usart2.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_Init(USART2,&usart2);
-    
-	USART_Cmd(USART2,ENABLE);
-    USART_DMACmd(USART2,USART_DMAReq_Rx,ENABLE);  
-	
-    nvic.NVIC_IRQChannel = DMA1_Stream5_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority = 1;
-    nvic.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&nvic);
-    
-    DMA_DeInit(DMA1_Stream5);
-    dma.DMA_Channel= DMA_Channel_4;
-    dma.DMA_PeripheralBaseAddr = (uint32_t)&(USART2->DR);
-    dma.DMA_Memory0BaseAddr = (uint32_t)sbus_rx_buffer;
-    dma.DMA_DIR = DMA_DIR_PeripheralToMemory;
-    dma.DMA_BufferSize = 18;
-    dma.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-    dma.DMA_MemoryInc = DMA_MemoryInc_Enable;
-    dma.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-    dma.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-    dma.DMA_Mode = DMA_Mode_Circular;
-    dma.DMA_Priority = DMA_Priority_VeryHigh;
-    dma.DMA_FIFOMode = DMA_FIFOMode_Disable;
-    dma.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
-    dma.DMA_MemoryBurst = DMA_Mode_Normal;
-    dma.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-    DMA_Init(DMA1_Stream5,&dma);
+		USART_InitTypeDef usart2;
+		GPIO_InitTypeDef  gpio;
+		NVIC_InitTypeDef  nvic;
+		DMA_InitTypeDef   dma;
 
-    DMA_ITConfig(DMA1_Stream5,DMA_IT_TC,ENABLE);
-    DMA_Cmd(DMA1_Stream5,ENABLE);
+		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_DMA1,ENABLE);
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2,ENABLE);
+
+		GPIO_PinAFConfig(GPIOA,GPIO_PinSource3 ,GPIO_AF_USART2);
+
+		gpio.GPIO_Pin = GPIO_Pin_3 ;
+		gpio.GPIO_Mode = GPIO_Mode_AF;
+		gpio.GPIO_OType = GPIO_OType_PP;
+		gpio.GPIO_Speed = GPIO_Speed_100MHz;
+		gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
+		GPIO_Init(GPIOA,&gpio);
+
+		USART_DeInit(USART2);
+		usart2.USART_BaudRate = 100000;   //SBUS 100K baudrate
+		usart2.USART_WordLength = USART_WordLength_8b;
+		usart2.USART_StopBits = USART_StopBits_1;
+		usart2.USART_Parity = USART_Parity_Even;
+		usart2.USART_Mode = USART_Mode_Rx;
+		usart2.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+		USART_Init(USART2,&usart2);
+
+		USART_Cmd(USART2,ENABLE);
+		USART_DMACmd(USART2,USART_DMAReq_Rx,ENABLE);  
+
+		nvic.NVIC_IRQChannel = DMA1_Stream5_IRQn;
+		nvic.NVIC_IRQChannelPreemptionPriority = 1;
+		nvic.NVIC_IRQChannelSubPriority = 1;
+		nvic.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&nvic);
+
+		DMA_DeInit(DMA1_Stream5);
+		dma.DMA_Channel= DMA_Channel_4;
+		dma.DMA_PeripheralBaseAddr = (uint32_t)&(USART2->DR);
+		dma.DMA_Memory0BaseAddr = (uint32_t)sbus_rx_buffer;
+		dma.DMA_DIR = DMA_DIR_PeripheralToMemory;
+		dma.DMA_BufferSize = 18;
+		dma.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+		dma.DMA_MemoryInc = DMA_MemoryInc_Enable;
+		dma.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+		dma.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+		dma.DMA_Mode = DMA_Mode_Circular;
+		dma.DMA_Priority = DMA_Priority_VeryHigh;
+		dma.DMA_FIFOMode = DMA_FIFOMode_Disable;
+		dma.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
+		dma.DMA_MemoryBurst = DMA_Mode_Normal;
+		dma.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+		DMA_Init(DMA1_Stream5,&dma);
+
+		DMA_ITConfig(DMA1_Stream5,DMA_IT_TC,ENABLE);
+		DMA_Cmd(DMA1_Stream5,ENABLE);
 }
 
 int radio_ahead_back_data=0;
@@ -86,9 +86,9 @@ uint16_t  Move_Straight,Move_Horizontal;
 
 void DMA1_Stream5_IRQHandler(void)
 {
-	
+	extern int16_t Fun_Speed;
 	if(DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5))
-    {
+  {
        int16_t target_speed,current_speed;
         DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5);
         DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
@@ -114,22 +114,26 @@ void DMA1_Stream5_IRQHandler(void)
         if((sbus_channel_temp[4] != 1)&&(sbus_channel_temp[4] != 2)&&(sbus_channel_temp[4] != 3))
         {
             delay_ms(1);
+					  return;
+						// TODO: Fault Process
             //reset CPU
-            __set_FAULTMASK(1);
-            NVIC_SystemReset();
+            //__set_FAULTMASK(1);
+            //NVIC_SystemReset();
         }
         if((sbus_channel_temp[5] != 1)&&(sbus_channel_temp[5] != 2)&&(sbus_channel_temp[5] != 3))
         {
             delay_ms(1);
+					  return;
+						// TODO: Fault Process
             //reset CPU
-            __set_FAULTMASK(1);
-            NVIC_SystemReset();
+            //__set_FAULTMASK(1);
+            //NVIC_SystemReset();
         }
         //if ok, then process the receive data.
 				
-
+/*
 //Move Part
-				/*
+				
 				if(sbus_channel_temp[4] == 3)   //左边选模式
         {
 					  //shift 按键
@@ -202,81 +206,82 @@ void DMA1_Stream5_IRQHandler(void)
 
 //遥控器
 		if(sbus_channel_temp[4] == 1)
-				{
-						Gim_yaw=sbus_channel_temp[2];//给固定yaw底盘
-						SendGimbalPosition(Gim_yaw,Gim_pitch,Shoot,Mode);
+		{
+				Gim_yaw=sbus_channel_temp[2];//给固定yaw底盘
+				//SendGimbalPosition(Gim_yaw,Gim_pitch,Shoot,Mode);
 
-				}		
-				else if(sbus_channel_temp[4] )
-				{			
-						Gim_yaw_temp = 8*(int16_t)(sbus_channel_temp[6])+1024;//鼠标x
-					  
-					  Gim_yaw=Gim_yaw+(float)(Gim_yaw_temp-Gim_yaw)/5;
-					  if(Gim_yaw<256) Gim_yaw=256;
-					  else  if(Gim_yaw>1792) Gim_yaw=1792;
-					  
-					  pitch_propotion=((float)(768)-(float)(abs(Gim_yaw-1024)))/768;
-					  pitch_propotion=pitch_propotion*pitch_propotion;
+		}		
+		else if(sbus_channel_temp[4] )
+		{			
+				Gim_yaw_temp = 8*(int16_t)(sbus_channel_temp[6])+1024;//鼠标x
+				
+				Gim_yaw=Gim_yaw+(float)(Gim_yaw_temp-Gim_yaw)/5;
+				if(Gim_yaw<256) Gim_yaw=256;
+				else  if(Gim_yaw>1792) Gim_yaw=1792;
+				
+				pitch_propotion=((float)(768)-(float)(abs(Gim_yaw-1024)))/768;
+				pitch_propotion=pitch_propotion*pitch_propotion;
+				
+				Gim_pitch = -7*(int16_t)(sbus_channel_temp[7])*pitch_propotion+1024;//鼠标y
+				if(Gim_pitch<512) Gim_pitch=512;
+				else  if(Gim_pitch>1536) Gim_pitch=1536;
+				Shoot = sbus_rx_buffer[12] ;
+				//右键加入811
+				if (sbus_rx_buffer[13])
+				{
+						TIM1->CCR1=800;     
+						TIM1->CCR2=800;				   
+												 //no.1		800-1600
+												 //no.2		650-1450
+												 //no.3   1450-2100
 						
-					  Gim_pitch = -7*(int16_t)(sbus_channel_temp[7])*pitch_propotion+1024;//鼠标y
-					  if(Gim_pitch<512) Gim_pitch=512;
-					  else  if(Gim_pitch>1536) Gim_pitch=1536;
-						Shoot = sbus_rx_buffer[12] ;
-					//右键加入811
-					if (sbus_rx_buffer[13])
-					{
-					TIM1->CCR1=800;     
-          TIM1->CCR2=800;				   
-						                         //no.1		800-1600
-						                         //no.2		650-1450
-						                         //no.3   1450-2100
-					
-//						switch (Auto_Aim_Cmd)
-//						{
-//						case 1:
-//							Gim_yaw=1024;
-//							Gim_pitch = Gim_pitch_tmp+1024;
-//						break;
-//						case 2://2 Right ,when locate in right ,Gim_yaw_tmp is negative
-//							Gim_yaw=-Gim_yaw_tmp+1024;					
-//							Gim_pitch = Gim_pitch_tmp+1024;
-//						break;
-//						case 3:
-//							Gim_yaw=-Gim_yaw_tmp+1024;
-//							Gim_pitch = Gim_pitch_tmp +1024;
-//						break;
-//						default:
-//						{
-//							Gim_yaw=1024;
-//							Gim_pitch=1024;
-//						}
-//						break;
-//						}
-						
-					}
-					else
-					{
-					TIM1->CCR1=1600;
-          TIM1->CCR2=1600;
-					}
-					
-					
-						SendGimbalPosition_mouse(Gim_yaw,Gim_pitch,Shoot,Mode);
-					//Add 
-					 if(sbus_channel_temp[2]!=1024)
-						 Gim_yaw=sbus_channel_temp[2];
+			//						switch (Auto_Aim_Cmd)
+			//						{
+			//						case 1:
+			//							Gim_yaw=1024;
+			//							Gim_pitch = Gim_pitch_tmp+1024;
+			//						break;
+			//						case 2://2 Right ,when locate in right ,Gim_yaw_tmp is negative
+			//							Gim_yaw=-Gim_yaw_tmp+1024;					
+			//							Gim_pitch = Gim_pitch_tmp+1024;
+			//						break;
+			//						case 3:
+			//							Gim_yaw=-Gim_yaw_tmp+1024;
+			//							Gim_pitch = Gim_pitch_tmp +1024;
+			//						break;
+			//						default:
+			//						{
+			//							Gim_yaw=1024;
+			//							Gim_pitch=1024;
+			//						}
+			//						break;
+			//						}
+							
 				}
-       
-				  if(abs(Gim_yaw-1024)<receiver_gap) Gim_yaw=1024;
-				  if(abs(Gim_pitch-1024)<receiver_gap) Gim_pitch=1024; 
-				  if(abs(Move_Speed_X-1024)<receiver_gap) Move_Speed_X=1024;
-				  if(abs(Move_Speed_Y-1024)<receiver_gap) Move_Speed_Y=1024; 
-					Conmmunication(Move_Speed_X,Move_Speed_Y,Rotate);
-					
-					
-					
-				*/
+				else
+				{
+						TIM1->CCR1=1600;
+						TIM1->CCR2=1600;
+				}
+				
+				
+				SendGimbalPosition_mouse(Gim_yaw,Gim_pitch,Shoot,Mode);
+				//Add 
+				if(sbus_channel_temp[2]!=1024)
+					Gim_yaw=sbus_channel_temp[2];
 			}
+	 
+			if(abs(Gim_yaw-1024)<receiver_gap) Gim_yaw=1024;
+			if(abs(Gim_pitch-1024)<receiver_gap) Gim_pitch=1024; 
+			if(abs(Move_Speed_X-1024)<receiver_gap) Move_Speed_X=1024;
+			if(abs(Move_Speed_Y-1024)<receiver_gap) Move_Speed_Y=1024; 
+			Conmmunication(Move_Speed_X,Move_Speed_Y,Rotate);
+					
+			*/		
+			
+			Fun_Speed = sbus_channel_temp[2];
+			
+		}
 }
 		
 float vP_yaw=0.7,vI_yaw=0.01,vD_yaw=0.4;

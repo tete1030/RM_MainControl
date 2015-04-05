@@ -1,5 +1,6 @@
 #ifndef __RECEIVER_H__
 #define __RECEIVER_H__
+#include <stdint.h>
 
 void Receiver_Configuration(void);
 extern uint16_t sbus_channel_temp[15];  //  temp sbus decode channel data
