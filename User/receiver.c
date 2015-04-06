@@ -86,14 +86,17 @@ uint16_t  Move_Straight,Move_Horizontal;
 
 void DMA1_Stream5_IRQHandler(void)
 {
-	extern int16_t Fun_Speed;
+	extern int16_t Remoter_CH0_Value;
+	extern int16_t Remoter_CH1_Value;
+	extern int16_t Remoter_CH2_Value;
+	extern int16_t Remoter_CH3_Value;
+	
 	if(DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5))
   {
        int16_t target_speed,current_speed;
         DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5);
         DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
 
-        //??????????,?????11?bit,????????
 
         sbus_channel_temp[0] = (sbus_rx_buffer[0]| (sbus_rx_buffer[1] << 8)) & 0x07ff; // ch0
         sbus_channel_temp[1] = ((sbus_rx_buffer[1] >> 3) | (sbus_rx_buffer[2] << 5)) & 0x07ff; //ch1
@@ -129,8 +132,8 @@ void DMA1_Stream5_IRQHandler(void)
             //__set_FAULTMASK(1);
             //NVIC_SystemReset();
         }
-        //if ok, then process the receive data.
-				
+
+//if ok, then process the receive data.				
 /*
 //Move Part
 				
@@ -278,9 +281,11 @@ void DMA1_Stream5_IRQHandler(void)
 			Conmmunication(Move_Speed_X,Move_Speed_Y,Rotate);
 					
 			*/		
-			
-			Fun_Speed = sbus_channel_temp[2];
-			
+
+			Remoter_CH0_Value = sbus_channel_temp[0];
+			Remoter_CH1_Value = sbus_channel_temp[1];
+			Remoter_CH2_Value = sbus_channel_temp[2];
+			Remoter_CH3_Value = sbus_channel_temp[3];
 		}
 }
 		

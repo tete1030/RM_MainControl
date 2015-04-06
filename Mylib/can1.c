@@ -2,6 +2,9 @@
 
 /*----CAN1_TX-----PA12----*/
 /*----CAN1_RX-----PA11----*/
+
+
+
 uint8_t Sensor_Data[4][8]={0};
 void CAN1_Configuration(void)
 {
@@ -107,10 +110,10 @@ void CAN1_RX0_IRQHandler(void)
 		}
 }
 
-void Can_Fun(int16_t speed)
+void Can_Fun(int16_t addr,int16_t speed)
 {
 		CanTxMsg Tx_message; 
-		Tx_message.StdId = 0x80;
+		Tx_message.StdId = CAN_CONTROL_IDENTIFIER << 3 | (addr & 0x7);
 		Tx_message.IDE = CAN_Id_Standard;
 		Tx_message.RTR = CAN_RTR_Data;
 		Tx_message.DLC = 2;
