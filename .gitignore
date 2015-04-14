@@ -35,11 +35,14 @@
 .DS_Store
 
 # Keil object files
-Project/Objects/
-Project/Listings/
+Keil/Objects/
+Keil/Listings/
 
 # Keil project files
-Project/JLinkLog.txt
-Project/STM32F4.uvgui.*
-Project/STM32F4.uvgui_*
-Project/*.bak
+Keil/JLinkLog.txt
+Keil/STM32F4.uvgui.*
+Keil/STM32F4.uvgui_*
+Keil/*.bak
+
+Debug/
+Release/
