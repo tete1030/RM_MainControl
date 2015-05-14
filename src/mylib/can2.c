@@ -1,5 +1,6 @@
 #include "stm32f4xx.h"
 #include "receiver.h"
+#include "stm32f4xx_it.h"
 
 /*----CAN2_TX-----PB13----*/
 /*----CAN2_RX-----PB12----*/
@@ -17,7 +18,6 @@ void CAN2_Configuration(void)
 	NVIC_InitTypeDef nvic;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN2, ENABLE);
 
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource12, GPIO_AF_CAN2);
@@ -25,11 +25,14 @@ void CAN2_Configuration(void)
 
 	gpio.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13;
 	gpio.GPIO_Mode = GPIO_Mode_AF;
+	gpio.GPIO_Speed = GPIO_Speed_100MHz;
+	gpio.GPIO_OType = GPIO_OType_PP;
+	gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOB, &gpio);
 
 	nvic.NVIC_IRQChannel = CAN2_RX0_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 0;
-	nvic.NVIC_IRQChannelSubPriority = 1;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_CAN2_RX0_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_CAN2_RX0_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 

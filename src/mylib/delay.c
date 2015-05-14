@@ -5,7 +5,7 @@ void delay_ms(unsigned int t)
 	{
 		int a = 42000;
 		while (a--)
-			;
+			asm("");
 	}
 }
 
@@ -16,6 +16,6 @@ void delay_us(unsigned int t)
 	{
 		int a = 40;
 		while (a--)
-			;
+			asm("");
 	}
 }

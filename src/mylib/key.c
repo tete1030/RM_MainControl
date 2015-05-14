@@ -1,4 +1,5 @@
 #include "stm32f4xx.h"
+#include "stm32f4xx_it.h"
 
 void KEY_Configuration(void)
 {
@@ -25,8 +26,8 @@ void KEY_Configuration(void)
 	EXTI_Init(&exti);
 
 	nvic.NVIC_IRQChannel = EXTI4_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 2;
-	nvic.NVIC_IRQChannelSubPriority = 1;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_EXTI4_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_EXTI4_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 }

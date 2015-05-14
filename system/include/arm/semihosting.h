@@ -1,5 +1,5 @@
 //
-// This file is part of the µOS++ III distribution.
+// This file is part of the 碌OS++ III distribution.
 // Copyright (c) 2014 Liviu Ionescu.
 //
 
@@ -98,14 +98,17 @@ call_host(int reason, void* arg)
 
 	__asm volatile
 	{
-		mov r0, reason
-		mov r1, arg
+		mov r2, =reason
+		ldr r0, [r2]
+		mov r2, =arg
+		ldr r1, [r2]
 #if defined(OS_DEBUG_SEMIHOSTING_FAULTS)
 		setend be
 #else
 		AngelSWIAsm AngelSWI
 #endif
-		mov value, r0
+		mov r2, =value
+		str r0, [r2]
 	}
 
 #endif

@@ -1,5 +1,6 @@
 #include "stm32f4xx.h"
 #include "12864.h"
+#include "stm32f4xx_it.h"
 
 void TIM6_Configuration(void)
 {
@@ -9,8 +10,8 @@ void TIM6_Configuration(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
 
 	nvic.NVIC_IRQChannel = TIM6_DAC_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 0;
-	nvic.NVIC_IRQChannelSubPriority = 0;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_TIM6_DAC_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_TIM6_DAC_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 
@@ -28,7 +29,7 @@ void TIM6_Start(void)
 	TIM_ClearFlag(TIM6, TIM_FLAG_Update);
 }
 
-//50ms ¿ØÖÆÒ»´Î
+//50ms æŽ§åˆ¶ä¸€æ¬¡
 void TIM6_DAC_IRQHandler(void)
 {
 	if (TIM_GetITStatus(TIM6, TIM_IT_Update) != RESET)

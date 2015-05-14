@@ -388,7 +388,6 @@ void DMA_Init(DMA_Stream_TypeDef* DMAy_Streamx, DMA_InitTypeDef* DMA_InitStruct)
 	/*------------------------- DMAy Streamx PAR Configuration -----------------*/
 	/* Write to DMAy Streamx PAR */
 	DMAy_Streamx->PAR = DMA_InitStruct->DMA_PeripheralBaseAddr;
-
 	/*------------------------- DMAy Streamx M0AR Configuration ----------------*/
 	/* Write to DMAy Streamx M0AR */
 	DMAy_Streamx->M0AR = DMA_InitStruct->DMA_Memory0BaseAddr;

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "stm32f4xx.h"
+#include "stm32f4xx_it.h"
 
 void Hall_Configuration(void)
 {
@@ -23,23 +24,23 @@ void Hall_Configuration(void)
 
 	exti.EXTI_Line = EXTI_Line10 | EXTI_Line11 | EXTI_Line12;
 	exti.EXTI_Mode = EXTI_Mode_Interrupt;
-	exti.EXTI_Trigger = EXTI_Trigger_Rising_Falling; //ÉÏÉıÑØÏÂ½µÑØ¶¼¼ì²â
+	exti.EXTI_Trigger = EXTI_Trigger_Rising_Falling; //ä¸Šå‡æ²¿ä¸‹é™æ²¿éƒ½æ£€æµ‹
 	exti.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&exti);
 
 	nvic.NVIC_IRQChannel = EXTI15_10_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 0;
-	nvic.NVIC_IRQChannelSubPriority = 0;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_EXTI15_10_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_EXTI15_10_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 }
 
-int direction = 1;          //Õı×ªÎª1£¬·´×ªÎª-1
-unsigned int BLDC_PWM = 0;  //µç»ú×ª¶¯Õ¼¿Õ±È£¬ÂúÖµÎª1000£¬µ«µ½²»ÁË100%
+int direction = 1;          //æ­£è½¬ä¸º1ï¼Œåè½¬ä¸º-1
+unsigned int BLDC_PWM = 0;  //ç”µæœºè½¬åŠ¨å ç©ºæ¯”ï¼Œæ»¡å€¼ä¸º1000ï¼Œä½†åˆ°ä¸äº†100%
 
 void EXTI15_10_IRQHandler(void)
 {
-	unsigned char hall_state = 0;   //»ô¶û×´Ì¬
+	unsigned char hall_state = 0;   //éœå°”çŠ¶æ€
 
 	hall_state = (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_10) << 2)
 			| (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11) << 1)

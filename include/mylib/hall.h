@@ -3,7 +3,7 @@
 
 void Hall_Configuration(void);
 
-extern int direction;          //Õı×ªÎª1£¬·´×ªÎª-1
-extern unsigned int BLDC_PWM;  //µç»ú×ª¶¯Õ¼¿Õ±È£¬ÂúÖµÎª1000£¬µ«µ½²»ÁË100%
+extern int direction;          //æ­£è½¬ä¸º1ï¼Œåè½¬ä¸º-1
+extern unsigned int BLDC_PWM;  //ç”µæœºè½¬åŠ¨å ç©ºæ¯”ï¼Œæ»¡å€¼ä¸º1000ï¼Œä½†åˆ°ä¸äº†100%
 
 #endif

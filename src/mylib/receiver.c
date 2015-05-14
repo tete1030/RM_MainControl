@@ -1,4 +1,5 @@
 #include "stm32f4xx.h"
+#include "stm32f4xx_it.h"
 #include "receiver.h"
 #include "usart3.h"
 #include "delay.h"
@@ -45,8 +46,8 @@ void Receiver_Configuration(void)
 		USART_DMACmd(USART2,USART_DMAReq_Rx,ENABLE);  
 
 		nvic.NVIC_IRQChannel = DMA1_Stream5_IRQn;
-		nvic.NVIC_IRQChannelPreemptionPriority = 1;
-		nvic.NVIC_IRQChannelSubPriority = 1;
+		nvic.NVIC_IRQChannelPreemptionPriority = ITP_USART2_DMA_RX_PREEMPTION;
+		nvic.NVIC_IRQChannelSubPriority = ITP_USART2_DMA_RX_SUB;
 		nvic.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&nvic);
 
@@ -64,7 +65,7 @@ void Receiver_Configuration(void)
 		dma.DMA_Priority = DMA_Priority_VeryHigh;
 		dma.DMA_FIFOMode = DMA_FIFOMode_Disable;
 		dma.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
-		dma.DMA_MemoryBurst = DMA_Mode_Normal;
+		dma.DMA_MemoryBurst = DMA_MemoryBurst_Single;
 		dma.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
 		DMA_Init(DMA1_Stream5,&dma);
 
@@ -106,12 +107,12 @@ void DMA1_Stream5_IRQHandler(void)
         sbus_channel_temp[4] = ((sbus_rx_buffer[5] >> 4)& 0x000C) >> 2;//radio_switch_left
         sbus_channel_temp[5] = ((sbus_rx_buffer[5] >> 4)& 0x0003);//radio_switch_right
        
-        sbus_channel_temp[6] = sbus_rx_buffer[6] | (sbus_rx_buffer[7] << 8);//���X��
-        sbus_channel_temp[7] = sbus_rx_buffer[8] | (sbus_rx_buffer[9] << 8);//���Y��
-        sbus_channel_temp[8] = sbus_rx_buffer[10] | (sbus_rx_buffer[11] << 8);//���Z��
-        sbus_channel_temp[9] = sbus_rx_buffer[12];//������
-        sbus_channel_temp[10] = sbus_rx_buffer[13];//����Ҽ�
-        sbus_channel_temp[11] = sbus_rx_buffer[14];// | (sbus_rx_buffer[15] << 8);//����
+        sbus_channel_temp[6] = sbus_rx_buffer[6] | (sbus_rx_buffer[7] << 8);//
+        sbus_channel_temp[7] = sbus_rx_buffer[8] | (sbus_rx_buffer[9] << 8);//
+        sbus_channel_temp[8] = sbus_rx_buffer[10] | (sbus_rx_buffer[11] << 8);//
+        sbus_channel_temp[9] = sbus_rx_buffer[12];//
+        sbus_channel_temp[10] = sbus_rx_buffer[13];//
+        sbus_channel_temp[11] = sbus_rx_buffer[14];// | (sbus_rx_buffer[15] << 8);//
         sbus_channel_temp[12] = sbus_rx_buffer[16] | (sbus_rx_buffer[17] << 8);//NULL
 
         
@@ -138,9 +139,9 @@ void DMA1_Stream5_IRQHandler(void)
 /*
 //Move Part
 				
-				if(sbus_channel_temp[4] == 3)   //���ѡģʽ
+				if(sbus_channel_temp[4] == 3)   //锟斤拷锟窖∧Ｊ
         {
-					  //shift ����
+					  //shift 锟斤拷锟斤拷
             if(sbus_channel_temp[11]&0x10)
             {
                target_speed=300; 
@@ -151,7 +152,7 @@ void DMA1_Stream5_IRQHandler(void)
                 target_speed = 600;
 
             }
-						//w,s����
+						//w,s锟斤拷锟斤拷
             if(sbus_channel_temp[11]&0x01)
             {
 							  current_speed=target_speed; 
@@ -174,7 +175,7 @@ void DMA1_Stream5_IRQHandler(void)
 								  Move_Speed_Y = 1024-movespeed_1;
 							else Move_Speed_Y = 1024;
             }
-            //a,d ��������
+            //a,d 锟斤拷锟斤拷锟斤拷锟斤拷
             if(sbus_channel_temp[11]&0x04)
             {
 							  current_speed=target_speed; 
@@ -208,16 +209,16 @@ void DMA1_Stream5_IRQHandler(void)
 					Rotate=sbus_channel_temp[2];
 				}
 
-//ң����
+//遥锟斤拷锟斤拷
 		if(sbus_channel_temp[4] == 1)
 		{
-				Gim_yaw=sbus_channel_temp[2];//���̶�yaw����
+				Gim_yaw=sbus_channel_temp[2];//锟斤拷锟教讹拷yaw锟斤拷锟斤拷
 				//SendGimbalPosition(Gim_yaw,Gim_pitch,Shoot,Mode);
 
 		}		
 		else if(sbus_channel_temp[4] )
 		{			
-				Gim_yaw_temp = 8*(int16_t)(sbus_channel_temp[6])+1024;//���x
+				Gim_yaw_temp = 8*(int16_t)(sbus_channel_temp[6])+1024;//锟斤拷锟絰
 				
 				Gim_yaw=Gim_yaw+(float)(Gim_yaw_temp-Gim_yaw)/5;
 				if(Gim_yaw<256) Gim_yaw=256;
@@ -226,11 +227,11 @@ void DMA1_Stream5_IRQHandler(void)
 				pitch_propotion=((float)(768)-(float)(abs(Gim_yaw-1024)))/768;
 				pitch_propotion=pitch_propotion*pitch_propotion;
 				
-				Gim_pitch = -7*(int16_t)(sbus_channel_temp[7])*pitch_propotion+1024;//���y
+				Gim_pitch = -7*(int16_t)(sbus_channel_temp[7])*pitch_propotion+1024;//锟斤拷锟統
 				if(Gim_pitch<512) Gim_pitch=512;
 				else  if(Gim_pitch>1536) Gim_pitch=1536;
 				Shoot = sbus_rx_buffer[12] ;
-				//�Ҽ�����811
+				//锟揭硷拷锟斤拷锟斤拷811
 				if (sbus_rx_buffer[13])
 				{
 						TIM1->CCR1=800;     

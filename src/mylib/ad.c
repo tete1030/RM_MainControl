@@ -30,7 +30,7 @@ void Power_Detection_Configuration(void)
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_56Cycles);
 }
 
-//µçÔ´µçÑ¹¼ì²â
+//ç”µæºç”µå‹æ£€æµ‹
 void Power_Detect(void)
 {
 	unsigned int AD_Value;

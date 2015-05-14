@@ -10,30 +10,30 @@
 #define LCD12864_SID_H   GPIO_SetBits(GPIOC,GPIO_Pin_11)
 #define LCD12864_SID_L   GPIO_ResetBits(GPIOC,GPIO_Pin_11)
 
-#define Command_ClearScreen           0x01   //LCDÇåÆÁ
-#define Command_CursorReturn          0x02   //LCD¹â±ê¹éÎ»
-#define Command_EntryMode_ACdowm      0x04   //DDRAM µØÖ·¼ÆÊıÆ÷£¨AC£©¼õ 1,»­Ãæ²»ÒÆÎ»
-#define Command_EntryMode_ACup 	      0x06   //DDRAM µØÖ·¼ÆÊıÆ÷£¨AC£©¼Ó 1,»­Ãæ²»ÒÆÎ»
-#define Command_EntryMode_FrameRight  0x05   //»­ÃæÕûÌåÓÒÒÆÎ»
-#define Command_EntryMode_FrameLeft   0x07   //»­ÃæÕûÌå×óÒÆÎ»
-#define Command_DispControl_DispOff   0x08   //ÏÔÊ¾¹Ø,ÓÎ±ê¹Ø,ÓÎ±êÎ»ÖÃ·´°×¹Ø
-#define Command_DispControl_DispOn    0x0c   //ÏÔÊ¾¿ª,ÓÎ±ê¹Ø,ÓÎ±êÎ»ÖÃ·´°×¹Ø
-#define Command_DispControl_ReverseOn 0x0d   //ÏÔÊ¾¿ª,ÓÎ±ê¹Ø,ÓÎ±êÎ»ÖÃ·´°×¿ª
-#define Command_DispControl_CursorOn  0x0e   //ÏÔÊ¾¿ª,ÓÎ±ê¿ª,ÓÎ±êÎ»ÖÃ·´°×¹Ø
-#define Command_DispControl_AllOn     0x0f   //ÏÔÊ¾¿ª,ÓÎ±ê¿ª,ÓÎ±êÎ»ÖÃ·´°×¿ª
-#define Command_Function_4bits_basic  0x20   //4Î»Êı¾İ£¬»ù±¾Ö¸Áî²Ù×÷
-#define Command_Function_4bits_exten  0x24   //4Î»Êı¾İ£¬À©³äÖ¸Áî²Ù×÷
-#define Command_Function_8bits_basic  0x30   //8Î»Êı¾İ£¬»ù±¾Ö¸Áî²Ù×÷
-#define Command_Function_8bits_exten  0x34   //8Î»Êı¾İ£¬À©³äÖ¸Áî²Ù×÷
+#define Command_ClearScreen           0x01   //LCDæ¸…å±
+#define Command_CursorReturn          0x02   //LCDå…‰æ ‡å½’ä½
+#define Command_EntryMode_ACdowm      0x04   //DDRAM åœ°å€è®¡æ•°å™¨ï¼ˆACï¼‰å‡ 1,ç”»é¢ä¸ç§»ä½
+#define Command_EntryMode_ACup 	      0x06   //DDRAM åœ°å€è®¡æ•°å™¨ï¼ˆACï¼‰åŠ  1,ç”»é¢ä¸ç§»ä½
+#define Command_EntryMode_FrameRight  0x05   //ç”»é¢æ•´ä½“å³ç§»ä½
+#define Command_EntryMode_FrameLeft   0x07   //ç”»é¢æ•´ä½“å·¦ç§»ä½
+#define Command_DispControl_DispOff   0x08   //æ˜¾ç¤ºå…³,æ¸¸æ ‡å…³,æ¸¸æ ‡ä½ç½®åç™½å…³
+#define Command_DispControl_DispOn    0x0c   //æ˜¾ç¤ºå¼€,æ¸¸æ ‡å…³,æ¸¸æ ‡ä½ç½®åç™½å…³
+#define Command_DispControl_ReverseOn 0x0d   //æ˜¾ç¤ºå¼€,æ¸¸æ ‡å…³,æ¸¸æ ‡ä½ç½®åç™½å¼€
+#define Command_DispControl_CursorOn  0x0e   //æ˜¾ç¤ºå¼€,æ¸¸æ ‡å¼€,æ¸¸æ ‡ä½ç½®åç™½å…³
+#define Command_DispControl_AllOn     0x0f   //æ˜¾ç¤ºå¼€,æ¸¸æ ‡å¼€,æ¸¸æ ‡ä½ç½®åç™½å¼€
+#define Command_Function_4bits_basic  0x20   //4ä½æ•°æ®ï¼ŒåŸºæœ¬æŒ‡ä»¤æ“ä½œ
+#define Command_Function_4bits_exten  0x24   //4ä½æ•°æ®ï¼Œæ‰©å……æŒ‡ä»¤æ“ä½œ
+#define Command_Function_8bits_basic  0x30   //8ä½æ•°æ®ï¼ŒåŸºæœ¬æŒ‡ä»¤æ“ä½œ
+#define Command_Function_8bits_exten  0x34   //8ä½æ•°æ®ï¼Œæ‰©å……æŒ‡ä»¤æ“ä½œ
 
-//LCDÓÎ±ê»òÏÔÊ¾ÒÆÎ»¿ØÖÆ
-#define Command_CursorShiftLeft  0x10   //¹â±ê×óÒÆ
-#define Command_CursorShiftRight 0x14	//¹â±êÓÒÒÆ
-#define Command_AllshiftLeft	 0x18	//ÏÔÊ¾ÕûÌå×óÒÆ
-#define Command_AllshiftRight	 0x1c	//ÏÔÊ¾ÕûÌåÓÒÒÆ
+//LCDæ¸¸æ ‡æˆ–æ˜¾ç¤ºç§»ä½æ§åˆ¶
+#define Command_CursorShiftLeft  0x10   //å…‰æ ‡å·¦ç§»
+#define Command_CursorShiftRight 0x14	//å…‰æ ‡å³ç§»
+#define Command_AllshiftLeft	 0x18	//æ˜¾ç¤ºæ•´ä½“å·¦ç§»
+#define Command_AllshiftRight	 0x1c	//æ˜¾ç¤ºæ•´ä½“å³ç§»
 
 /**
- * @brief  LCD12864_Delay    ´ÖÂÔÑÓÊ±
+ * @brief  LCD12864_Delay    ç²—ç•¥å»¶æ—¶
  * @param  void
  * @retval void
  */
@@ -46,7 +46,7 @@ void LCD12864_Delay(unsigned int delay)
 }
 
 /**
- * @brief  LCD12864_WriteByte    Ïò12864Ğ´Ò»×Ö½Ú
+ * @brief  LCD12864_WriteByte    å‘12864å†™ä¸€å­—èŠ‚
  * @param  void
  * @retval void
  */
@@ -64,48 +64,48 @@ void LCD12864_WriteByte(unsigned char Byte)
 		LCD12864_Delay(40);
 		LCD12864_CLK_L;
 		LCD12864_Delay(20);
-		Byte <<= 1;      //×óÒÆ
+		Byte <<= 1;      //å·¦ç§»
 	}
 }
 
 /**
- * @brief  LCD12864_WriteCmd    ÏòLCDĞ´ÈëÖ¸Áî
+ * @brief  LCD12864_WriteCmd    å‘LCDå†™å…¥æŒ‡ä»¤
  * @param  void
  * @retval void
  */
 void LCD12864_WriteCmd(unsigned char Command)
 {
 	unsigned char Hdata, Ldata;
-	Hdata = Command & 0xf0;		   //È¡¸ßËÄÎ»
-	Ldata = (Command << 4) & 0xf0;     //È¡µÍËÄÎ»
-	LCD12864_WriteByte(0xf8);    //Ğ´Ö¸Áî£¬ÆğÊ¼Êı¾İ 1111 1000
-	LCD12864_Delay(50);          //ÑÓÊ±ÊÇ±ØĞëµÄ
-	LCD12864_WriteByte(Hdata);   //·¢ËÍ¸ßËÄÎ»
-	LCD12864_Delay(50);          //ÑÓÊ±ÊÇ±ØĞëµÄ
-	LCD12864_WriteByte(Ldata);   //·¢ËÍµÍËÄÎ»
-	LCD12864_Delay(50);          //ÑÓÊ±ÊÇ±ØĞëµÄ
+	Hdata = Command & 0xf0;		   //å–é«˜å››ä½
+	Ldata = (Command << 4) & 0xf0;     //å–ä½å››ä½
+	LCD12864_WriteByte(0xf8);    //å†™æŒ‡ä»¤ï¼Œèµ·å§‹æ•°æ® 1111 1000
+	LCD12864_Delay(50);          //å»¶æ—¶æ˜¯å¿…é¡»çš„
+	LCD12864_WriteByte(Hdata);   //å‘é€é«˜å››ä½
+	LCD12864_Delay(50);          //å»¶æ—¶æ˜¯å¿…é¡»çš„
+	LCD12864_WriteByte(Ldata);   //å‘é€ä½å››ä½
+	LCD12864_Delay(50);          //å»¶æ—¶æ˜¯å¿…é¡»çš„
 }
 
 /**
- * @brief  LCD12864_WriteData    ÏòLCDĞ´ÈëĞèÒªÏÔÊ¾µÄÊı¾İ
+ * @brief  LCD12864_WriteData    å‘LCDå†™å…¥éœ€è¦æ˜¾ç¤ºçš„æ•°æ®
  * @param  void
  * @retval void
  */
 void LCD12864_WriteData(unsigned char Data)
 {
 	unsigned char Hdata, Ldata;
-	Hdata = Data & 0xf0;		       //È¡¸ßËÄÎ»
-	Ldata = (Data << 4) & 0xf0;        //È¡µÍËÄÎ»
-	LCD12864_WriteByte(0xfa);   //Ğ´Êı¾İ£¬ÆğÊ¼Êı¾İ 1111 1010
-	LCD12864_Delay(40);         //ÑÓÊ±ÊÇ±ØĞëµÄ
-	LCD12864_WriteByte(Hdata);  //·¢ËÍ¸ßËÄÎ»
-	LCD12864_Delay(40);         //ÑÓÊ±ÊÇ±ØĞëµÄ
-	LCD12864_WriteByte(Ldata);  //·¢ËÍµÍËÄÎ»
-	LCD12864_Delay(40);         //ÑÓÊ±ÊÇ±ØĞëµÄ
+	Hdata = Data & 0xf0;		       //å–é«˜å››ä½
+	Ldata = (Data << 4) & 0xf0;        //å–ä½å››ä½
+	LCD12864_WriteByte(0xfa);   //å†™æ•°æ®ï¼Œèµ·å§‹æ•°æ® 1111 1010
+	LCD12864_Delay(40);         //å»¶æ—¶æ˜¯å¿…é¡»çš„
+	LCD12864_WriteByte(Hdata);  //å‘é€é«˜å››ä½
+	LCD12864_Delay(40);         //å»¶æ—¶æ˜¯å¿…é¡»çš„
+	LCD12864_WriteByte(Ldata);  //å‘é€ä½å››ä½
+	LCD12864_Delay(40);         //å»¶æ—¶æ˜¯å¿…é¡»çš„
 }
 
 /**
- * @brief  LCD12864_SetPosition    Ö¸¶¨LCDµÄÏÔÊ¾Î»ÖÃ x:0~3 y:0~7
+ * @brief  LCD12864_SetPosition    æŒ‡å®šLCDçš„æ˜¾ç¤ºä½ç½® x:0~3 y:0~7
  * @param  void
  * @retval void
  */
@@ -124,7 +124,7 @@ void LCD12864_SetPosition(unsigned char x, unsigned char y)
 }
 
 /**
- * @brief  LCD12864_DispChar    ÔÚLCDµÄÖ¸¶¨Î»ÖÃÏÔÊ¾Ò»¸ö×Ö·û
+ * @brief  LCD12864_DispChar    åœ¨LCDçš„æŒ‡å®šä½ç½®æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦
  * @param  void
  * @retval void
  */
@@ -135,7 +135,7 @@ void LCD12864_DispChar(unsigned char x, unsigned char y, unsigned char Char)
 }
 
 /**
- * @brief  LCD12864_DispString    ÔÚLCDµÄÖ¸¶¨Î»ÖÃÏÔÊ¾Ò»¸ö×Ö·û´®
+ * @brief  LCD12864_DispString    åœ¨LCDçš„æŒ‡å®šä½ç½®æ˜¾ç¤ºä¸€ä¸ªå­—ç¬¦ä¸²
  * @param  void
  * @retval void
  */
@@ -147,18 +147,18 @@ void LCD12864_DispString(unsigned char x, unsigned char y, unsigned char *str)
 }
 
 /**
- * @brief  LCD12864_Clear    12864Òº¾§ÆÁÇåÆÁ
+ * @brief  LCD12864_Clear    12864æ¶²æ™¶å±æ¸…å±
  * @param  void
  * @retval void
  */
 void LCD12864_Clear(void)
 {
-	LCD12864_WriteCmd(Command_ClearScreen);   // LCDÇåÆÁ
-	LCD12864_WriteCmd(Command_CursorReturn);  // LCD¹â±ê¹éÎ»
+	LCD12864_WriteCmd(Command_ClearScreen);   // LCDæ¸…å±
+	LCD12864_WriteCmd(Command_CursorReturn);  // LCDå…‰æ ‡å½’ä½
 }
 
 /**
- * @brief  LCD12864_Init    ³õÊ¼»¯12864Òº¾§ÆÁ
+ * @brief  LCD12864_Init    åˆå§‹åŒ–12864æ¶²æ™¶å±
  * @param  void
  * @retval void
  */
@@ -173,19 +173,20 @@ void LCD12864_Init(void)
 	gpio.GPIO_Mode = GPIO_Mode_OUT;
 	gpio.GPIO_OType = GPIO_OType_PP;
 	gpio.GPIO_Speed = GPIO_Speed_100MHz;
+	gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC, &gpio);
 
 	while (x--)
 		;
-	LCD12864_WriteCmd(Command_ClearScreen);         // LCDÇåÆÁ
-	LCD12864_WriteCmd(Command_CursorReturn);        // LCD¹â±ê¹éÎ»
-	LCD12864_WriteCmd(Command_EntryMode_ACup);      // ½øÈëµãÉèÖÃ,ACÔö¼Ó£¬»­Ãæ²»ÒÆÎ»
-	LCD12864_WriteCmd(Command_DispControl_DispOn);  // ÏÔÊ¾¿ª£¬ÓÎ±ê¹Ø£¬ÓÎ±êÎ»ÖÃ·´°×¹Ø
-	LCD12864_WriteCmd(Command_Function_8bits_basic);  // 8Î»Êı¾İ£¬»ù±¾Ö¸Áî²Ù×÷
+	LCD12864_WriteCmd(Command_ClearScreen);         // LCDæ¸…å±
+	LCD12864_WriteCmd(Command_CursorReturn);        // LCDå…‰æ ‡å½’ä½
+	LCD12864_WriteCmd(Command_EntryMode_ACup);      // è¿›å…¥ç‚¹è®¾ç½®,ACå¢åŠ ï¼Œç”»é¢ä¸ç§»ä½
+	LCD12864_WriteCmd(Command_DispControl_DispOn);  // æ˜¾ç¤ºå¼€ï¼Œæ¸¸æ ‡å…³ï¼Œæ¸¸æ ‡ä½ç½®åç™½å…³
+	LCD12864_WriteCmd(Command_Function_8bits_basic);  // 8ä½æ•°æ®ï¼ŒåŸºæœ¬æŒ‡ä»¤æ“ä½œ
 }
 
 /**
- * @brief  LCD12864_Printf    12864¸ñÊ½»¯Êä³ö
+ * @brief  LCD12864_Printf    12864æ ¼å¼åŒ–è¾“å‡º
  * @param  void
  * @retval void
  */

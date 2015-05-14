@@ -1,5 +1,5 @@
 //
-// This file is part of the µOS++ III distribution.
+// This file is part of the 碌OS++ III distribution.
 // Copyright (c) 2014 Liviu Ionescu.
 //
 

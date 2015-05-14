@@ -1,4 +1,5 @@
 #include "stm32f4xx.h"
+#include "stm32f4xx_it.h"
 
 void Exti_Configuration(void)
 {
@@ -32,20 +33,20 @@ void Exti_Configuration(void)
 	EXTI_Init(&exti);
 
 	nvic.NVIC_IRQChannel = EXTI0_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 2;
-	nvic.NVIC_IRQChannelSubPriority = 1;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_EXTI0_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_EXTI0_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 
 	nvic.NVIC_IRQChannel = EXTI1_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 2;
-	nvic.NVIC_IRQChannelSubPriority = 2;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_EXTI1_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_EXTI1_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 
 	nvic.NVIC_IRQChannel = EXTI9_5_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority = 2;
-	nvic.NVIC_IRQChannelSubPriority = 3;
+	nvic.NVIC_IRQChannelPreemptionPriority = ITP_EXTI9_5_PREEMPTION;
+	nvic.NVIC_IRQChannelSubPriority = ITP_EXTI9_5_SUB;
 	nvic.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic);
 }

@@ -1,5 +1,5 @@
 //
-// This file is part of the µOS++ III distribution.
+// This file is part of the 碌OS++ III distribution.
 // Copyright (c) 2014 Liviu Ionescu.
 //
 
@@ -430,16 +430,15 @@ HardFault_Handler (void)
 __asm void __attribute__ ((section(".after_vectors"),weak))
 HardFault_Handler (void)
 {
-	movs r0,
-#4
+	movs r0,#4
 	mov r1,lr
 	tst r0,r1
 	beq 1f
 	mrs r0,psp
 	b 2f
-	1:
+1:
 	mrs r0,msp
-	2:
+2:
 	mov r1,lr
 	ldr r2,=HardFault_Handler_C
 	bx r2
@@ -503,8 +502,7 @@ BusFault_Handler(void)
 __asm void __attribute__ ((section(".after_vectors"),weak))
 BusFault_Handler (void)
 {
-	tst lr,
-#4
+	tst lr,#4
 	ite eq
 	mrseq r0,msp
 	mrsne r0,psp
@@ -557,8 +555,7 @@ UsageFault_Handler(void)
 __asm void __attribute__ ((section(".after_vectors"),weak))
 UsageFault_Handler (void)
 {
-	tst lr,
-#4
+	tst lr,#4
 	ite eq
 	mrseq r0,msp
 	mrsne r0,psp

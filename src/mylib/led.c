@@ -14,6 +14,7 @@ void Led_Configuration(void)
 	gpio.GPIO_Mode = GPIO_Mode_OUT;
 	gpio.GPIO_OType = GPIO_OType_PP;
 	gpio.GPIO_Speed = GPIO_Speed_100MHz;
+	gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOA, &gpio);
 
 	LED_GREEN_OFF();
