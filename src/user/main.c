@@ -14,7 +14,7 @@
 char keys_down[9];
 char keys[] =
 { 'W', 'S', 'A', 'D', 'Q', 'E', '^', '*' };
-extern uint16_t sbus_channel_temp[];
+extern uint16_t sbus_channel_temp[15];
 
 int16_t Remoter_CH0_Value = 1024;
 int16_t Remoter_CH1_Value = 1024;
@@ -46,7 +46,7 @@ int main(void)
 	{
 		LED_RED_TOGGLE();
 		LED_GREEN_TOGGLE();
-		BUZZER_TOGGLE();
+		//BUZZER_TOGGLE();
 		delay_ms(50);
 	}
 	//printf("Start;\r\n");
