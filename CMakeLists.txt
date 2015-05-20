@@ -17,8 +17,7 @@ set(SOURCE_FILES
     include/mylib/12864.h
     include/mylib/ad.h
     include/mylib/buzzer.h
-    include/mylib/can1.h
-    include/mylib/can2.h
+    include/mylib/gimbal.h
     include/mylib/delay.h
     include/mylib/driver.h
     include/mylib/encoder.h
@@ -42,8 +41,7 @@ set(SOURCE_FILES
     src/mylib/12864.c
     src/mylib/ad.c
     src/mylib/buzzer.c
-    src/mylib/can1.c
-    src/mylib/can2.c
+    src/mylib/gimbal.c
     src/mylib/delay.c
     src/mylib/driver.c
     src/mylib/encoder.c
@@ -151,7 +149,19 @@ set(SOURCE_FILES
     system/src/stm32f4-stdperiph/stm32f4xx_syscfg.c
     system/src/stm32f4-stdperiph/stm32f4xx_tim.c
     system/src/stm32f4-stdperiph/stm32f4xx_usart.c
-    system/src/stm32f4-stdperiph/stm32f4xx_wwdg.c)
+    system/src/stm32f4-stdperiph/stm32f4xx_wwdg.c
+    include/mylib/ticker.h
+    src/mylib/ticker.c
+    include/mylib/can1.h
+    src/mylib/can1.c
+    include/mylib/can2.h
+    src/mylib/can2.c
+    include/mylib/can_packet.h
+    include/mylib/can_packet_queue.h
+    include/user/execute.h
+    src/user/execute.c
+    include/mylib/pid.h
+    src/mylib/pid.c)
 
 include_directories(include)
 include_directories(include/mylib)

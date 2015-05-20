@@ -1,6 +1,8 @@
 #ifndef __DRIVER_H__
 #define __DRIVER_H__
 
+#include <stdint.h>
+
 typedef enum {
 	MCT_Max_Speed = 0,
 	MCT_PID = 1,
@@ -19,6 +21,7 @@ typedef enum {
 #define CAN_DRIVER_LEFT_END_ADDR DRIVER_LEFT_END
 #define CAN_DRIVER_RIGHT_END_ADDR DRIVER_RIGHT_END
 #define CAN_DRIVER_SELECT_ALL_ADDR DRIVER_ALL
+
 
 void Driver_Configuration();
 void Driver_Set_Enable(uint8_t motor_sel, uint8_t motor_enable_sel);

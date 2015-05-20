@@ -1,15 +1,12 @@
+//
+// Created by Texot Qexoq on 5/16/15.
+//
+
 #ifndef __CAN2_H__
 #define __CAN2_H__
 
-void CAN2_Configuration(void);
-extern int32_t angle;
-extern int16_t Gim_yaw, Gim_pitch;
-extern uint8_t Mode;
-extern uint8_t Shoot;
+void CAN2_Configuration(void (*send_handler)(uint16_t, int8_t), void (*receive_handler)(CanRxMsg*), uint16_t IdHigh, uint16_t IdHighMask, uint16_t IdLow, uint16_t IdLowMask);
+int8_t CAN2_Transmit(uint16_t id, uint16_t addr, char* data, uint8_t size);
+int8_t CAN2_AsyncTransmit(uint16_t id, uint16_t addr, char* data, uint8_t size);
 
-void SendGimbalPosition(uint16_t Gim_yaw, uint16_t Gim_pitch, uint8_t Shoot,
-		uint8_t Mode);
-
-void SendGimbalPosition_mouse(int16_t Gim_yaw, int16_t Gim_pitch, uint8_t Shoot,
-		uint8_t Mode);
-#endif 
+#endif //__CAN2_H__

@@ -28,8 +28,11 @@ void SysTick_Handler(void);
 }
 #endif
 
+#define ITP_USART2_PREEMPTION 1
+#define ITP_USART2_SUB 0
+
 // 遥控器接收器
-#define ITP_USART2_DMA_RX_PREEMPTION 4
+#define ITP_USART2_DMA_RX_PREEMPTION 1
 #define ITP_USART2_DMA_RX_SUB 0
 
 
@@ -40,12 +43,15 @@ void SysTick_Handler(void);
 #define ITP_USART3_DMA_RX_PREEMPTION 3
 #define ITP_USART3_DMA_RX_SUB 1
 
-#define ITP_USART3_GLOBAL_PREEMPTION 1
+#define ITP_USART3_GLOBAL_PREEMPTION 2
 #define ITP_USART3_GLOBAL_SUB 0
 
 // 与云台
-#define ITP_CAN2_RX0_PREEMPTION 2
+#define ITP_CAN2_RX0_PREEMPTION 1
 #define ITP_CAN2_RX0_SUB 0
+
+#define ITP_CAN2_TX_PREEMPTION 1
+#define ITP_CAN2_TX_SUB 1
 
 // 与驱动
 #define ITP_CAN1_RX0_PREEMPTION 2
@@ -55,28 +61,28 @@ void SysTick_Handler(void);
 #define ITP_CAN1_TX_SUB 2
 
 #define ITP_SYSTICK_PREEMPTION 0
-#define ITP_SYSTICK_PREEMPTION 0
+#define ITP_SYSTICK_SUB 0
 
 // ******** Following Not Used By Apr 20, 2015 *********
 
-#define ITP_TIM6_DAC_PREEMPTION 10
-#define ITP_TIM6_DAC_SUB 0
+#define ITP_TIM6_DAC_PREEMPTION 3
+#define ITP_TIM6_DAC_SUB 3
 
 // Key
-#define ITP_EXTI4_PREEMPTION 10
-#define ITP_EXTI4_SUB 0
+#define ITP_EXTI4_PREEMPTION 3
+#define ITP_EXTI4_SUB 3
 
-#define ITP_EXTI15_10_PREEMPTION 10
-#define ITP_EXTI15_10_SUB 0
+#define ITP_EXTI15_10_PREEMPTION 3
+#define ITP_EXTI15_10_SUB 3
 
-#define ITP_EXTI0_PREEMPTION 10
-#define ITP_EXTI0_SUB 0
+#define ITP_EXTI0_PREEMPTION 3
+#define ITP_EXTI0_SUB 3
 
-#define ITP_EXTI1_PREEMPTION 10
-#define ITP_EXTI1_SUB 0
+#define ITP_EXTI1_PREEMPTION 3
+#define ITP_EXTI1_SUB 3
 
-#define ITP_EXTI9_5_PREEMPTION 10
-#define ITP_EXTI9_5_SUB 0
+#define ITP_EXTI9_5_PREEMPTION 3
+#define ITP_EXTI9_5_SUB 3
 
 
 
