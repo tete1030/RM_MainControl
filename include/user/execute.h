@@ -5,6 +5,9 @@
 #ifndef __EXECUTE_H__
 #define __EXECUTE_H__
 
-void Execute_Receiver_Command();
+extern volatile int16_t car_mech_angle_yaw;
+
+void Execute_Do_Receiver_Command();
+void Execute_Init(void);
 
 #endif //__EXECUTE_H__

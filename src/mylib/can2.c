@@ -14,18 +14,20 @@ void (*can2_sh)(uint16_t, int8_t);
 
 #define CAN2_PACKET_QUEUE_SIZE 10
 
-uint16_t can2_mailbox0_id =0, can2_mailbox1_id =0, can2_mailbox2_id =0;
+volatile uint16_t can2_mailbox0_id =0;
+volatile uint16_t can2_mailbox1_id =0;
+volatile uint16_t can2_mailbox2_id =0;
 
-CAN_Packet_Queue can2_pq[CAN2_PACKET_QUEUE_SIZE];
-uint8_t can2_pq_start = 0;
-uint8_t can2_pq_end = 0;
-int8_t can2_pq_full = 0;
+volatile CAN_Packet_Queue can2_pq[CAN2_PACKET_QUEUE_SIZE];
+volatile uint8_t can2_pq_start = 0;
+volatile uint8_t can2_pq_end = 0;
+volatile int8_t can2_pq_full = 0;
 
-uint32_t can2_async_transmit_times = 0;
-uint32_t can2_queue_full_times = 0;
+volatile uint32_t can2_async_transmit_times = 0;
+volatile uint32_t can2_queue_full_times = 0;
 
-int8_t can2_mutex_transmit = 0;
-int8_t can2_mutex_queue = 0;
+volatile int8_t can2_mutex_transmit = 0;
+volatile int8_t can2_mutex_queue = 0;
 
 void CAN2_Configuration(void (*send_handler)(uint16_t, int8_t), void (*receive_handler)(CanRxMsg*), uint16_t IdHigh, uint16_t IdHighMask, uint16_t IdLow, uint16_t IdLowMask)
 {
@@ -49,9 +51,9 @@ void CAN2_Configuration(void (*send_handler)(uint16_t, int8_t), void (*receive_h
 
     can2_rh = receive_handler;
     can2_sh = send_handler;
-    nvic.NVIC_IRQChannel = CAN2_RX0_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = ITP_CAN2_RX0_PREEMPTION;
-    nvic.NVIC_IRQChannelSubPriority = ITP_CAN2_RX0_SUB;
+    nvic.NVIC_IRQChannel = CAN2_RX1_IRQn;
+    nvic.NVIC_IRQChannelPreemptionPriority = ITP_CAN2_RX1_PREEMPTION;
+    nvic.NVIC_IRQChannelSubPriority = ITP_CAN2_RX1_SUB;
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 
@@ -84,44 +86,71 @@ void CAN2_Configuration(void (*send_handler)(uint16_t, int8_t), void (*receive_h
     can_filter.CAN_FilterIdLow = IdLow << 5;
     can_filter.CAN_FilterMaskIdHigh = IdHighMask << 5;
     can_filter.CAN_FilterMaskIdLow = IdLowMask << 5;
-    can_filter.CAN_FilterFIFOAssignment = 1; //the message which pass the filter save in fifo0
+    can_filter.CAN_FilterFIFOAssignment = 1;
     can_filter.CAN_FilterActivation = ENABLE;
     CAN_FilterInit(&can_filter);
 
     CAN_ITConfig(CAN2, CAN_IT_FMP1, ENABLE);
+    CAN_ITConfig(CAN2, CAN_IT_TME, ENABLE);
 }
 
 void CAN2_TX_IRQHandler(void)
 {
-    uint16_t id;
+    int16_t id;
     int8_t code;
+    uint32_t tsr;
     if (CAN_GetITStatus(CAN2, CAN_IT_TME) != RESET)
     {
+        tsr = CAN2->TSR;
         if(can2_sh)
         {
-            if(CAN2->TSR & (CAN_TSR_TME0 | CAN_TSR_TME1))
+            if((tsr & CAN_TSR_TME0) && (tsr & CAN_TSR_RQCP0))
             {
-                if(CAN2->TSR & CAN_TSR_TME0)
-                {
-                    id = can2_mailbox0_id;
-                    code = ((CAN2->TSR & CAN_TSR_TXOK0) == CAN_TSR_TXOK0);
-                }
+                CAN2->TSR = CAN_TSR_RQCP0;
+                id = can2_mailbox0_id;
+                if (tsr & CAN_TSR_TXOK0)
+                    code = 0;
+                else if (tsr & CAN_TSR_TERR0)
+                    code = 1;
+                else if (tsr & CAN_TSR_ALST0)
+                    code = 3;
                 else
-                {
-                    id = can2_mailbox1_id;
-                    code = ((CAN2->TSR & CAN_TSR_TXOK1) == CAN_TSR_TXOK1);
-                }
+                    code = 4;
+            }
+            else if((tsr & CAN_TSR_TME1) && (tsr & CAN_TSR_RQCP1))
+            {
+                CAN2->TSR = CAN_TSR_RQCP1;
+                id = can2_mailbox1_id;
+                if (tsr & CAN_TSR_TXOK1)
+                    code = 0;
+                else if (tsr & CAN_TSR_TERR1)
+                    code = 1;
+                else if (tsr & CAN_TSR_ALST1)
+                    code = 3;
+                else
+                    code = 4;
+            }
+            else if((tsr & CAN_TSR_TME2) && (tsr & CAN_TSR_RQCP2))
+            {
+                CAN2->TSR = CAN_TSR_RQCP2;
+                id = can2_mailbox2_id;
+                if (tsr & CAN_TSR_TXOK2)
+                    code = 0;
+                else if (tsr & CAN_TSR_TERR2)
+                    code = 1;
+                else if (tsr & CAN_TSR_ALST2)
+                    code = 3;
+                else
+                    code = 4;
             }
             else
             {
-                id = can2_mailbox2_id;
-                code = ((CAN2->TSR & CAN_TSR_TXOK2) == CAN_TSR_TXOK2);
+                id = -1;
             }
-        }
-        CAN_ClearITPendingBit(CAN2, CAN_IT_TME);
 
-        if(can2_sh)
-            can2_sh(id, code);
+            if(id >= 0)
+                can2_sh(id, code);
+        }
 
         if(can2_mutex_transmit == 0 && can2_mutex_queue == 0 && (can2_pq_full == 1 || can2_pq_end != can2_pq_start))
         {
@@ -134,7 +163,7 @@ void CAN2_TX_IRQHandler(void)
     }
 }
 
-void CAN2_RX0_IRQHandler(void)
+void CAN2_RX1_IRQHandler(void)
 {
     CanRxMsg rx_message;
 

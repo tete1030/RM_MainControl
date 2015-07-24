@@ -6,6 +6,7 @@
 #include "main.h"
 #include "can_packet.h"
 #include "debug.h"
+#include "pid.h"
 
 #define DRIVER_ENCODER_SAMPLE_DURATION 5
 #define DRIVER_ENCODER_SPEED_FACTOR (1000/DRIVER_ENCODER_SAMPLE_DURATION)
@@ -65,11 +66,11 @@ struct Driver_Packet_Set_Configuration
 
 #pragma pack(pop)
 
-
-
+PID_Controller pidc;
 
 void Driver_Configuration()
 {
+    PID_Controller_Configuration pidcc;
 	extern void Driver_Can_Receive_Handler(CanRxMsg* rx_msg);
 	extern void Driver_Can_Send_Handler(uint16_t id, int8_t code);
 	CAN1_Configuration(Driver_Can_Send_Handler, Driver_Can_Receive_Handler,
@@ -78,6 +79,22 @@ void Driver_Configuration()
                        CAN_PACKET_DESTTYPE_CENTER | CAN_PACKET_PLACETYPE_SPECIFIC | CAN_DRIVER_SELECT_ALL_ADDR,
                        CAN_PACKET_TYPE_MASK_DESTTYPE | CAN_PACKET_TYPE_MASK_PLACETYPE | CAN_PACKET_TYPE_MASK_SOURCEADDR_ALL);
 
+    pidcc.mode = PID_Controller_Mode_Absolute;
+    pidcc.kp = 0.01;
+    pidcc.ki = 0;//.0001;
+    pidcc.kd = 0.1;
+    pidcc.ko = 0;
+    pidcc.max_output = (float) CAR_MAX_W0_SPEED;
+    pidcc.min_output = (float) -CAR_MAX_W0_SPEED;
+    pidcc.max_integral = (float) CAR_MAX_W0_SPEED / 5;
+    pidcc.min_integral = (float) -CAR_MAX_W0_SPEED / 5;
+    PID_Controller_Init(&pidc, &pidcc);
+}
+
+
+float Driver_Angle_Control(int16_t cur_yaw)
+{
+    return PID_Controller_Calc(&pidc, cur_yaw, 0, 0, NULL);
 }
 
 #define DRIVER_PACKET_ID_ENABLE 0x1
@@ -107,7 +124,7 @@ void Driver_Set_Speed(int16_t vx, int16_t vy, float w0)
 
 	float p = (float) (vx + vy) * CAR_ENCODER_NUM;
 	float q = (float) (vx - vy) * CAR_ENCODER_NUM;
-	float m = w0 * CAR_WIDTH_PLUS_LENGTH_N_DIV_2 * CAR_ENCODER_NUM;
+	float m = -w0 * CAR_WIDTH_PLUS_LENGTH_N_DIV_2 * CAR_ENCODER_NUM;
 	float n = (float) (2 * PI * CAR_WHEEL_RADIUS * DRIVER_ENCODER_SPEED_FACTOR);
 
 	dpss.speed_left_front = (int16_t)((p - m) / n);
@@ -196,6 +213,7 @@ void Driver_Can_Receive_Handler(CanRxMsg* rx_msg)
 
         }
         else if (type == CAN_PACKET_CENTER_DATATYPE_DRIVER_STATUS) {
+            /*
             if(Car_Status_Lock()) {
                 switch(id)
                 {
@@ -216,6 +234,7 @@ void Driver_Can_Receive_Handler(CanRxMsg* rx_msg)
                 }
                 Car_Status_Unlock();
             }
+             */
         }
 
 
@@ -224,5 +243,5 @@ void Driver_Can_Receive_Handler(CanRxMsg* rx_msg)
 
 void Driver_Can_Send_Handler(uint16_t id, int8_t code)
 {
-	if(code == 0)printf("%u send failed from can1\r\n", id);
+	if(code != 0)printf("id %u send failed with code %d from can1\r\n", id, code);
 }

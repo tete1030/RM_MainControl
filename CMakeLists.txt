@@ -20,7 +20,6 @@ set(SOURCE_FILES
     include/mylib/gimbal.h
     include/mylib/delay.h
     include/mylib/driver.h
-    include/mylib/encoder.h
     include/mylib/exti.h
     include/mylib/gyroscope.h
     include/mylib/hall.h
@@ -44,7 +43,6 @@ set(SOURCE_FILES
     src/mylib/gimbal.c
     src/mylib/delay.c
     src/mylib/driver.c
-    src/mylib/encoder.c
     src/mylib/exti.c
     src/mylib/gyroscope.c
     src/mylib/hall.c

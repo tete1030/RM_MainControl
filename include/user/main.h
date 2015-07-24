@@ -96,6 +96,11 @@
 
  */
 
+
+//#define CAR_1
+#define CAR_2
+//#define CAR_3
+
 // Unit: mm
 #define CAR_WHEEL_RADIUS 75
 #define CAR_WIDTH 232
@@ -108,56 +113,17 @@
 
 #define CAR_MAX_X_SPEED 3000.0
 #define CAR_MAX_Y_SPEED 3000.0
+
+#define CAR_MAX_X_HIGH_SPEED 4000.0
+#define CAR_MAX_Y_HIGH_SPEED 4000.0
+
 #define CAR_MAX_W0_SPEED (2*PI)
-
-
-typedef struct Car_Status
-{
-    int8_t mutex_this;
-
-    int8_t local_friction;
-    int8_t remote_friction;
-    int8_t local_friction_locked;
-    int8_t remote_friction_ready;
-
-    int8_t local_shooter;
-    int8_t remote_shooter;
-
-    struct accel
-    {
-        int16_t x;
-        int16_t y;
-        int16_t z;
-    } remote_accel;
-
-    struct gyro
-    {
-        int16_t x;
-        int16_t y;
-        int16_t z;
-    } remote_gyro;
-
-    float remote_speed_body_x;
-    float remote_speed_body_y;
-    float remote_speed_body_r;
-
-    float remote_speed_motor_left_front;
-    float remote_speed_motor_right_front;
-    float remote_speed_motor_left_end;
-    float remote_speed_motor_right_end;
-
-    uint16_t remote_angle_gimbal_motor_pitch;
-    uint16_t remote_angle_gimbal_motor_yaw;
-    float remote_angle_gimbal_yaw;
-    float remote_angle_gimbal_pitch;
-    float remote_angle_gimbal_roll;
-} Car_Status;
-
-extern Car_Status car_status;
-
-int8_t Car_Status_Lock();
-void Car_Status_Unlock();
+#define CAR_MAX_YAW_SPEED (5)
+#define CAR_MAX_PITCH_SPEED (5)
 
 #define CAN_ADDR 0x0
+
+void Maincontrol_Set_Enable_Control(uint8_t enable);
+ uint8_t Maincontrol_Get_Enable_Control_State(void);
 
 #endif 

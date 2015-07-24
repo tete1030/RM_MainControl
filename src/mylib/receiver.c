@@ -3,41 +3,45 @@
 #include "stm32f4xx_it.h"
 #include "receiver.h"
 #include "ticker.h"
+#include "led.h"
+#include "buzzer.h"
+#include "delay.h"
 
 /*-----USART2_RX-----PA3----*/ 
 //for D-BUS
 
-uint16_t movespeed_1 = 1024;
-uint16_t movespeed_2 = 0;
-float pitch_propotion;
-int16_t Gim_yaw_temp;
+
 
 unsigned char sbus_rx_buffer[18];
 
-Receiver_Packet receiver_packet;
-int8_t mutex_receiving_packet = 0;
-int8_t mutex_read_packet = 0;
-int8_t new_receiver_packet = 0;
+volatile Receiver_Packet receiver_packet;
+volatile int8_t mutex_receiving_packet = 0;
+volatile int8_t mutex_read_packet = 0;
+volatile int8_t new_receiver_packet = 0;
 
 uint32_t resync_time_span = 0;
 uint64_t resync_last_rec = 0;
 
-#define SWITCH_DMA_DIRECT_DIRECT 0
-#define SWITCH_DMA_DIRECT_DMA 1
+#define SWITCH_RECEIVE_MODE_DIRECT 0
+#define SWITCH_RECEIVE_MODE_DMA 1
 
 void Switch_DMA_Direct(uint8_t option)
 {
-    if(option == SWITCH_DMA_DIRECT_DMA)
+    if(option == SWITCH_RECEIVE_MODE_DMA)
     {
+    	//USART_DMACmd(USART2, USART_DMAReq_Rx, ENABLE);
         USART_ITConfig(USART2, USART_IT_RXNE, DISABLE);
-        USART_DMACmd(USART2, USART_DMAReq_Rx, ENABLE);
+        USART_ClearITPendingBit(USART2, USART_IT_RXNE);
         DMA_Cmd(DMA1_Stream5, ENABLE);
+
     }
     else
     {
-        DMA_Cmd(DMA1_Stream5,DISABLE);
-        USART_DMACmd(USART2, USART_DMAReq_Rx, DISABLE);
+        DMA_Cmd(DMA1_Stream5, DISABLE);
+        DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
         USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+
+        //USART_DMACmd(USART2, USART_DMAReq_Rx, DISABLE);
     }
 }
 
@@ -106,7 +110,8 @@ void Receiver_Configuration(void)
 		DMA_ITConfig(DMA1_Stream5,DMA_IT_TC | DMA_IT_TE | DMA_IT_FE,ENABLE);
 
         resync_time_span = Ticker_Get_MS_Tickcount() * 5;
-        Switch_DMA_Direct(SWITCH_DMA_DIRECT_DMA);
+        USART_DMACmd(USART2, USART_DMAReq_Rx, ENABLE);
+        Switch_DMA_Direct(SWITCH_RECEIVE_MODE_DMA);
 }
 
 int8_t Receiver_Get_New_Packet(Receiver_Packet *rp)
@@ -129,32 +134,26 @@ void USART2_IRQHandler(void)
 {
     if(USART_GetITStatus(USART2, USART_IT_RXNE))
     {
+    	USART_ClearITPendingBit(USART2, USART_IT_RXNE);
+
         if(Ticker_Get_Tick() - resync_last_rec > resync_time_span)
         {
-            Switch_DMA_Direct(SWITCH_DMA_DIRECT_DMA);
+            Switch_DMA_Direct(SWITCH_RECEIVE_MODE_DMA);
             return;
         }
-        USART_ClearITPendingBit(USART2, USART_IT_RXNE);
+
         resync_last_rec = Ticker_Get_Tick();
     }
 }
-
-
-
-
-uint16_t  sbus_channel_temp[15] = {0};  //  temp sbus decode channel data
-uint16_t  radio_yuntai_temp[4] = {0};  //
-
-uint16_t  Move_Speed_X=1024, Move_Speed_Y=1024,Rotate=1024;
-uint16_t  Move_Straight,Move_Horizontal;
 
 
 void DMA1_Stream5_IRQHandler(void)
 {
 	uint8_t fault_detect = 0;
 	
+
 	if(DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5)) {
-        DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
+		DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
 
         mutex_receiving_packet = 1;
         if(mutex_read_packet == 0) {
@@ -198,8 +197,9 @@ void DMA1_Stream5_IRQHandler(void)
 
             if (fault_detect) {
                 // Resync
+
                 resync_last_rec = Ticker_Get_Tick();
-                Switch_DMA_Direct(SWITCH_DMA_DIRECT_DIRECT);
+                Switch_DMA_Direct(SWITCH_RECEIVE_MODE_DIRECT);
             }
             else
             {

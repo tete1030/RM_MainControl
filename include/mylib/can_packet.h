@@ -43,19 +43,13 @@
 #define CAN_PACKET_CENTER_DATATYPE_DRIVER_STATUS \
 	(0x1 << 5)									/* xxx 001x xxxx */
 // center fifo1
-#define CAN_PACKET_CENTER_DATATYPE_GIMBAL_OTHERS \
+#define CAN_PACKET_CENTER_DATATYPE_STATUS_GM_MECH_ANGLE_YAW \
     (0x0 << 5)									/* xxx 000x xxxx */
-#define CAN_PACKET_CENTER_DATATYPE_GIMBAL_ACCEL \
-    (0x1 << 5)									/* xxx 001x xxxx */
-#define CAN_PACKET_CENTER_DATATYPE_GIMBAL_GYRO \
-    (0x2 << 5)									/* xxx 010x xxxx */
-#define CAN_PACKET_CENTER_DATATYPE_GIMBAL_YAW_PITCH \
-    (0x3 << 5)									/* xxx 011x xxxx */
-#define CAN_PACKET_CENTER_DATATYPE_GIMBAL_ROLL \
-    (0x4 << 5)									/* xxx 100x xxxx */
+#define CAN_PACKET_CENTER_DATATYPE_STATUS_GM_SET_ENABLE_CONTROL \
+	(0x1 << 5)									/* xxx 001x xxxx */
 
 // gimbal fifo0
-#define CAN_PACKET_GIMBAL_DATATYPE_GIMBAL_MOTOR_STATUS \
+#define CAN_PACKET_GIMBAL_DATATYPE_STATUS_GIMBAL_MOTOR \
     (0x0 << 5)                                  /* xxx 000x xxxx */
 // gimbal fifo1
 #define CAN_PACKET_GIMBAL_DATATYPE_SET_SPEED \
@@ -68,7 +62,8 @@
     (0x3 << 5)                                  /* xxx 011x xxxx */
 #define CAN_PACKET_GIMBAL_DATATYPE_SET_YAW_PITCH \
     (0x4 << 5)                                  /* xxx 100x xxxx */
-
+#define CAN_PACKET_GIMBAL_DATATYPE_CONFIG_FRICTION \
+	(0x5 << 5)                                  /* xxx 101x xxxx */
 
 #define CAN_PACKET_PLACETYPE_SPECIFIC \
 	(0x0 << 4)									/* xxx xxx0 xxxx */

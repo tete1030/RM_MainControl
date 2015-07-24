@@ -3,63 +3,101 @@
 //
 
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #include "pid.h"
 
-struct PID_Controller
+void PID_Controller_Init(PID_Controller *pidc, PID_Controller_Configuration *pcc)
 {
-    float kp;
-    float ki;
-    float kd;
-    float ko;
+    memcpy(&(pidc->config), pcc, sizeof(PID_Controller_Configuration));
 
-
-    float pre_error[3];
-    uint8_t cur_error_offset;
-    float last_output;
-
-    float max_value;
-    float min_value;
-};
-
-void PID_Init(PID_Controller *pidc, float kp, float ki, float kd, float ko, float max_value, float min_value)
-{
-    pidc->kp = kp;
-    pidc->ki = ki;
-    pidc->kd = kd;
-    pidc->ko = ko;
+    pidc->sum_kp_ki_kd = pidc->config.kp + pidc->config.ki + pidc->config.kd;
+    pidc->sum_kp_2kd = pidc->config.kp + 2 * pidc->config.kd;
 
     pidc->pre_error[0] = 0;
     pidc->pre_error[1] = 0;
     pidc->pre_error[2] = 0;
 
+    pidc->integral = 0;
+
     pidc->cur_error_offset = 0;
     pidc->last_output = 0;
 
-    pidc->max_value = max_value;
-    pidc->min_value = min_value;
 }
 
-float PID_Control(PID_Controller *pidc, float cur_value, float target_value, float other)
+float _incremental_control(PID_Controller *pidc, float cur_value, float target_value, float other, float *incre_output)
 {
     float output;
     pidc->pre_error[pidc->cur_error_offset] = target_value - cur_value;
 
-    output = pidc->kp * (pidc->pre_error[pidc->cur_error_offset] - pidc->pre_error[(pidc->cur_error_offset + 2) % 3])
-             + pidc->ki * pidc->pre_error[pidc->cur_error_offset]
-             + pidc->kd *
+    /*
+    output = pidc->config.kp * (pidc->pre_error[pidc->cur_error_offset] - pidc->pre_error[(pidc->cur_error_offset + 2) % 3])
+             + pidc->config.ki * pidc->pre_error[pidc->cur_error_offset]
+             + pidc->config.kd *
                         (pidc->pre_error[pidc->cur_error_offset]
                          - 2 * pidc->pre_error[(pidc->cur_error_offset + 2) % 3]
                          + pidc->pre_error[(pidc->cur_error_offset + 1) % 3])
-             + pidc->ko * other;
+             + pidc->config.ko * other;
+             */
+    output = pidc->sum_kp_ki_kd * pidc->pre_error[pidc->cur_error_offset]
+             - pidc->sum_kp_2kd * pidc->pre_error[(pidc->cur_error_offset + 2) % 3]
+             + pidc->config.kd * pidc->pre_error[(pidc->cur_error_offset + 1) % 3]
+             + pidc->config.ko * other;
+
+    pidc->cur_error_offset = (uint8_t) ((pidc->cur_error_offset + 1) % 3);
+
+    if(incre_output)
+        *incre_output = output;
 
     output += pidc->last_output;
 
-    if(output > pidc->max_value)
-        output = pidc->max_value;
-    else if(output < pidc->min_value)
-        output = pidc->min_value;
+    if(output > pidc->config.max_output)
+        output = pidc->config.max_output;
+    else if(output < pidc->config.min_output)
+        output = pidc->config.min_output;
 
     pidc->last_output = output;
 
     return output;
 };
+
+float _absolute_control(PID_Controller *pidc, float cur_value, float target_value, float other)
+{
+    float output;
+    pidc->pre_error[pidc->cur_error_offset] = target_value - cur_value;
+
+    pidc->integral += pidc->pre_error[pidc->cur_error_offset];
+
+    if(pidc->integral < pidc->config.min_integral)
+        pidc->integral = pidc->config.min_integral;
+    else if(pidc->integral > pidc->config.max_integral)
+        pidc->integral = pidc->config.max_integral;
+
+    output = pidc->config.kp * pidc->pre_error[pidc->cur_error_offset]
+             + pidc->config.ki * pidc->integral
+             + pidc->config.kd *
+               (pidc->pre_error[pidc->cur_error_offset]
+                - pidc->pre_error[(pidc->cur_error_offset + 2) % 3])
+             + pidc->config.ko * other;
+
+    pidc->cur_error_offset = (uint8_t) ((pidc->cur_error_offset + 1) % 3);
+
+    if(output > pidc->config.max_output)
+        output = pidc->config.max_output;
+    else if(output < pidc->config.min_output)
+        output = pidc->config.min_output;
+
+    return output;
+}
+
+float PID_Controller_Calc(PID_Controller *pidc, float cur_value, float target_value, float other, float *incre_output)
+{
+    if(pidc->config.mode == PID_Controller_Mode_Incremental)
+    {
+        _incremental_control(pidc, cur_value, target_value, other, incre_output);
+    }
+    else
+    {
+        _absolute_control(pidc, cur_value, target_value, other);
+    }
+}

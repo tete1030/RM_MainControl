@@ -47,8 +47,8 @@ void SysTick_Handler(void);
 #define ITP_USART3_GLOBAL_SUB 0
 
 // 与云台
-#define ITP_CAN2_RX0_PREEMPTION 1
-#define ITP_CAN2_RX0_SUB 0
+#define ITP_CAN2_RX1_PREEMPTION 1
+#define ITP_CAN2_RX1_SUB 0
 
 #define ITP_CAN2_TX_PREEMPTION 1
 #define ITP_CAN2_TX_SUB 1

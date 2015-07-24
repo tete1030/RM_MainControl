@@ -14,18 +14,20 @@ void (*can1_sh)(uint16_t, int8_t);
 
 #define CAN1_PACKET_QUEUE_SIZE 10
 
-uint16_t can1_mailbox0_id =0, can1_mailbox1_id =0, can1_mailbox2_id =0;
+volatile uint16_t can1_mailbox0_id =0;
+volatile uint16_t can1_mailbox1_id =0;
+volatile uint16_t can1_mailbox2_id =0;
 
-CAN_Packet_Queue can1_pq[CAN1_PACKET_QUEUE_SIZE];
-uint8_t can1_pq_start = 0;
-uint8_t can1_pq_end = 0;
-int8_t can1_pq_full = 0;
+volatile CAN_Packet_Queue can1_pq[CAN1_PACKET_QUEUE_SIZE];
+volatile uint8_t can1_pq_start = 0;
+volatile uint8_t can1_pq_end = 0;
+volatile int8_t can1_pq_full = 0;
 
-uint32_t can1_async_transmit_times = 0;
-uint32_t can1_queue_full_times = 0;
+volatile uint32_t can1_async_transmit_times = 0;
+volatile uint32_t can1_queue_full_times = 0;
 
-int8_t can1_mutex_transmit = 0;
-int8_t can1_mutex_queue = 0;
+volatile int8_t can1_mutex_transmit = 0;
+volatile int8_t can1_mutex_queue = 0;
 
 void CAN1_Configuration(void (*send_handler)(uint16_t, int8_t), void (*receive_handler)(CanRxMsg*), uint16_t IdHigh, uint16_t IdHighMask, uint16_t IdLow, uint16_t IdLowMask)
 {
@@ -96,35 +98,61 @@ void CAN1_Configuration(void (*send_handler)(uint16_t, int8_t), void (*receive_h
 
 void CAN1_TX_IRQHandler(void)
 {
-    uint16_t id;
+    int16_t id;
     int8_t code;
+    uint32_t tsr;
     if (CAN_GetITStatus(CAN1, CAN_IT_TME) != RESET)
     {
+        tsr = CAN1->TSR;
         if(can1_sh)
         {
-            if(CAN1->TSR & (CAN_TSR_TME0 | CAN_TSR_TME1))
+            if((tsr & CAN_TSR_TME0) && (tsr & CAN_TSR_RQCP0))
             {
-                if(CAN1->TSR & CAN_TSR_TME0)
-                {
-                    id = can1_mailbox0_id;
-                    code = ((CAN1->TSR & CAN_TSR_TXOK0) == CAN_TSR_TXOK0);
-                }
+                CAN1->TSR = CAN_TSR_RQCP0;
+                id = can1_mailbox0_id;
+                if (tsr & CAN_TSR_TXOK0)
+                    code = 0;
+                else if (tsr & CAN_TSR_TERR0)
+                    code = 1;
+                else if (tsr & CAN_TSR_ALST0)
+                    code = 3;
                 else
-                {
-                    id = can1_mailbox1_id;
-                    code = ((CAN1->TSR & CAN_TSR_TXOK1) == CAN_TSR_TXOK1);
-                }
+                    code = 4;
+            }
+            else if((tsr & CAN_TSR_TME1) && (tsr & CAN_TSR_RQCP1))
+            {
+                CAN1->TSR = CAN_TSR_RQCP1;
+                id = can1_mailbox1_id;
+                if (tsr & CAN_TSR_TXOK1)
+                    code = 0;
+                else if (tsr & CAN_TSR_TERR1)
+                    code = 1;
+                else if (tsr & CAN_TSR_ALST1)
+                    code = 3;
+                else
+                    code = 4;
+            }
+            else if((tsr & CAN_TSR_TME2) && (tsr & CAN_TSR_RQCP2))
+            {
+                CAN1->TSR = CAN_TSR_RQCP2;
+                id = can1_mailbox2_id;
+                if (tsr & CAN_TSR_TXOK2)
+                    code = 0;
+                else if (tsr & CAN_TSR_TERR2)
+                    code = 1;
+                else if (tsr & CAN_TSR_ALST2)
+                    code = 3;
+                else
+                    code = 4;
             }
             else
             {
-                id = can1_mailbox2_id;
-                code = ((CAN1->TSR & CAN_TSR_TXOK2) == CAN_TSR_TXOK2);
+                id = -1;
             }
-        }
-        CAN_ClearITPendingBit(CAN1, CAN_IT_TME);
 
-        if(can1_sh)
-            can1_sh(id, code);
+            if(id >= 0)
+                can1_sh(id, code);
+        }
 
         if(can1_mutex_transmit == 0 && can1_mutex_queue == 0 && (can1_pq_full == 1 || can1_pq_end != can1_pq_start))
         {

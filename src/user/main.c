@@ -15,64 +15,61 @@
 #include "gimbal.h"
 #include "execute.h"
 
+volatile uint8_t control_enable = 0;
 
-Car_Status car_status;
-
-void Car_Status_Init()
+void Maincontrol_Set_Enable_Control(uint8_t enable)
 {
-    memset(&car_status, 0, sizeof(car_status));
+	control_enable = enable;
+	BUZZER_ON();
+	delay_ms(200);
+	BUZZER_OFF();
 }
 
-int8_t Car_Status_Lock()
+uint8_t Maincontrol_Get_Enable_Control_State(void)
 {
-    if(car_status.mutex_this == 1) return 0;
-    car_status.mutex_this = 1;
-    return 1;
-}
-
-void Car_Status_Unlock()
-{
-    car_status.mutex_this = 0;
+	return control_enable;
 }
 
 int main(void)
 {
-	int16_t vx, vy;
-	float w0;
+	uint i;
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	Ticker_Configuration();
 	delay_init();
 
-    Car_Status_Init();
-
 	Led_Configuration();
+
     Buzzer_Configuration();
 	USART3_Configuration();
 
-    Gimbal_Configuration();
-	delay_ms(50);
-	Driver_Configuration();
+	Execute_Init();
+
+	delay_ms(100);
+
+	Driver_Configuration(); // 使用CAN1，已在内部初始化CAN1
 	Driver_Set_Enable( DRIVER_ALL, DRIVER_ALL );
+
+    Gimbal_Configuration(); // 使用CAN2，一定要先初始化CAN1再初始化CAN2过滤器
 
 	//Debug_Configuration();
 	Receiver_Configuration();
 
-	LED_RED_ON();
-	//printf("Start;\r\n");
+	LED_GREEN_ON();
+	i = 0;
 	while (1)
 	{
-		delay_ms(50);
-		//printf("CH2=%d, CH3=%d\r\n", Remoter_CH2_Value, Remoter_CH3_Value);
+		delay_us(500);
+		if(i == 400)
+		{
+			LED_RED_TOGGLE();
+			i = 0;
+		}
 
-		//vx = (((float)Remoter_CH3_Value - 1024) * CAR_MAX_X_SPEED) / 660;
-		//vy = (((float)Remoter_CH2_Value - 1024) * CAR_MAX_Y_SPEED) / 660;
-		//w0 = (((float)Remoter_CH0_Value - 1024) * PI ) / 660;
-		//Driver_Set_Speed(vx, vy, w0);
 		//Debug_Execute_Computer_Command();
-		Execute_Receiver_Command();
 
-		LED_GREEN_TOGGLE();
-		LED_RED_TOGGLE();
+		Execute_Do_Receiver_Command();
+
+		i++;
 	}
 
 }

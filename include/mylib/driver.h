@@ -24,6 +24,7 @@ typedef enum {
 
 
 void Driver_Configuration();
+float Driver_Angle_Control(int16_t cur_yaw);
 void Driver_Set_Enable(uint8_t motor_sel, uint8_t motor_enable_sel);
 void Driver_Set_Speed(int16_t vx, int16_t vy, float w0);
 void Driver_Set_Wheel_Speed(uint8_t motor_sel, int16_t destSpeed);

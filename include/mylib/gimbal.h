@@ -8,6 +8,7 @@ void Gimbal_Set_Speed(float speed_yaw, float speed_pitch);
 void Gimbal_Set_Friction(uint8_t enable);
 void Gimbal_Set_Shooter(uint8_t enable);
 void Gimbal_Set_Laser(uint8_t enable);
+void Gimbal_Config_Friction(int16_t remoter_value);
 
 /*
 extern int32_t angle;

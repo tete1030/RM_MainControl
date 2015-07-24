@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stm32f4-stdperiph/stm32f4xx_can.h>
 #include "stm32f4xx_can.h"
 #include "stm32f4xx.h"
 #include "receiver.h"
@@ -7,42 +8,15 @@
 #include "stm32f4xx_it.h"
 #include "gimbal.h"
 #include "main.h"
+#include "execute.h"
+
 
 #define CAN_GIMBAL_ADDR 0x0
 
 #pragma pack(push,1)
-struct Gimbal_Maincontrol_Packet_Others
+struct Gimbal_Maincontrol_Packet_GM_Mech_Angle_Yaw
 {
-    int8_t friction_state;
-    int8_t friction_ready_state;
-    int8_t shooter_state;
-    uint16_t pitch_angle;
-    uint16_t yaw_angle;
-};
-
-struct Gimbal_Maincontrol_Packet_Accel
-{
-    int16_t x;
-    int16_t y;
-    int16_t z;
-};
-
-struct Gimbal_Maincontrol_Packet_Gyro
-{
-    int16_t x;
-    int16_t y;
-    int16_t z;
-};
-
-struct Gimbal_Maincontrol_Packet_Yaw_Pitch
-{
-    float yaw;
-    float pitch;
-};
-
-struct Gimbal_Maincontrol_Packet_Roll
-{
-    float roll;
+    int16_t yaw;
 };
 
 struct Maincontrol_Gimbal_Packet_Set_Speed
@@ -72,6 +46,16 @@ struct Maincontrol_Gimbal_Packet_Set_Yaw_Pitch
     float pitch;
 };
 
+struct Maincontrol_Gimbal_Packet_Config_Friction
+{
+    uint16_t remoter_value;
+};
+
+struct Maincontrol_Gimbal_Packet_Set_Enable_Control
+{
+	uint8_t enable;
+};
+
 #pragma pack(pop)
 
 void Gimbal_Configuration(void)
@@ -92,46 +76,20 @@ void Gimbal_Can_Receive_Handler(CanRxMsg* rx_msg)
     type = (uint16_t) (rx_msg->StdId & CAN_PACKET_TYPE_MASK_DATATYPE);
     id = (uint16_t) (rx_msg->StdId & CAN_PACKET_TYPE_MASK_SOURCEADDR_STRICT);
 
-    if(Car_Status_Lock()) {
-
-        // TODO: rewrite other can packet seal methods
-        switch (type) {
-            case CAN_PACKET_CENTER_DATATYPE_GIMBAL_OTHERS:
-                car_status.remote_friction = ((struct Gimbal_Maincontrol_Packet_Others *)(rx_msg->Data))->friction_state;
-                car_status.remote_friction_ready = ((struct Gimbal_Maincontrol_Packet_Others *)(rx_msg->Data))->friction_ready_state;
-                car_status.remote_shooter = ((struct Gimbal_Maincontrol_Packet_Others *)(rx_msg->Data))->shooter_state;
-                car_status.remote_angle_gimbal_motor_pitch = ((struct Gimbal_Maincontrol_Packet_Others *)(rx_msg->Data))->pitch_angle;
-                car_status.remote_angle_gimbal_motor_yaw = ((struct Gimbal_Maincontrol_Packet_Others *)(rx_msg->Data))->yaw_angle;
-                break;
-            case CAN_PACKET_CENTER_DATATYPE_GIMBAL_ACCEL:
-                car_status.remote_accel.x = ((struct Gimbal_Maincontrol_Packet_Accel *)(rx_msg->Data))->x;
-                car_status.remote_accel.y = ((struct Gimbal_Maincontrol_Packet_Accel *)(rx_msg->Data))->y;
-                car_status.remote_accel.z = ((struct Gimbal_Maincontrol_Packet_Accel *)(rx_msg->Data))->z;
-                break;
-            case CAN_PACKET_CENTER_DATATYPE_GIMBAL_GYRO:
-                car_status.remote_gyro.x = ((struct Gimbal_Maincontrol_Packet_Gyro *)(rx_msg->Data))->x;
-                car_status.remote_gyro.y = ((struct Gimbal_Maincontrol_Packet_Gyro *)(rx_msg->Data))->y;
-                car_status.remote_gyro.z = ((struct Gimbal_Maincontrol_Packet_Gyro *)(rx_msg->Data))->z;
-                break;
-            case CAN_PACKET_CENTER_DATATYPE_GIMBAL_YAW_PITCH:
-                car_status.remote_angle_gimbal_pitch = ((struct Gimbal_Maincontrol_Packet_Yaw_Pitch *)(rx_msg->Data))->pitch;
-                car_status.remote_angle_gimbal_yaw = ((struct Gimbal_Maincontrol_Packet_Yaw_Pitch *)(rx_msg->Data))->yaw;
-                break;
-            case CAN_PACKET_CENTER_DATATYPE_GIMBAL_ROLL:
-                car_status.remote_angle_gimbal_roll = ((struct Gimbal_Maincontrol_Packet_Roll *)(rx_msg->Data))->roll;
-                break;
-            default:
-                ;// do nothing
-        }
-
-        Car_Status_Unlock();
+    if(type == CAN_PACKET_CENTER_DATATYPE_STATUS_GM_MECH_ANGLE_YAW)
+    {
+        car_mech_angle_yaw = ((struct Gimbal_Maincontrol_Packet_GM_Mech_Angle_Yaw *) rx_msg->Data)->yaw;
+    }
+    else if(type == CAN_PACKET_CENTER_DATATYPE_STATUS_GM_SET_ENABLE_CONTROL)
+    {
+    	Maincontrol_Set_Enable_Control(((struct Maincontrol_Gimbal_Packet_Set_Enable_Control *) rx_msg->Data)->enable);
     }
 
 }
 
 void Gimbal_Can_Send_Handler(uint16_t id, int8_t code)
 {
-    if(code == 0)printf("%u send failed from can2\r\n", id);
+    if(code != 0)printf("id %u send failed with code %d from can2\r\n", id, code);
 }
 
 #define GIMBAL_PACKET_SET_SPEED 0x0
@@ -213,5 +171,21 @@ void Gimbal_Set_Yaw_Pitch(float yaw, float pitch)
                        CAN_ADDR,
                        (char*) &mgpsyp,
                        sizeof(mgpsyp)
+    );
+}
+
+#define GIMBAL_PACKET_CONFIG_FRICTION 0x5
+
+void Gimbal_Config_Friction(int16_t remoter_value)
+{
+    static struct Maincontrol_Gimbal_Packet_Config_Friction mgpcf;
+    mgpcf.remoter_value = remoter_value;
+    CAN2_AsyncTransmit(GIMBAL_PACKET_SET_YAW_PITCH,
+                       CAN_PACKET_DESTTYPE_GIMBAL |
+                       CAN_PACKET_GIMBAL_DATATYPE_CONFIG_FRICTION |
+                       CAN_PACKET_PLACETYPE_SPECIFIC |
+                       CAN_ADDR,
+                       (char*) &mgpcf,
+                       sizeof(mgpcf)
     );
 }
